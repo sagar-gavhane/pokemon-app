@@ -1,0 +1,21 @@
+{
+  "name": "pokemon-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "serverless offline start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mysql": "^2.16.0",
+    "serverless-http": "^1.6.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^3.27.0"
+  }
+}
