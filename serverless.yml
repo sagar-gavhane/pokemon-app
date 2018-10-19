@@ -21,7 +21,7 @@ functions:
           path: pokemon
           method: post
       - http:
-          path: pokemon
+          path: pokemon/{id}
           method: put
       - http:
           path: pokemon/{id}
