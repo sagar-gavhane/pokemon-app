@@ -8,6 +8,7 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+// Handle pokemon GET route for all pokemon
 app.get('/pokemon/', (req, res) => {
   const query = 'SELECT * FROM pokemon_tb'
   pool.query(query, (err, results, fields) => {
@@ -25,6 +26,7 @@ app.get('/pokemon/', (req, res) => {
   })
 })
 
+// Handle pokemon GET route for specific pokemon
 app.get('/pokemon/:id', (req, res) => {
   const id = req.params.id
   const query = `SELECT * FROM pokemon_tb WHERE id=${id}`
@@ -116,7 +118,7 @@ app.delete('/pokemon/:id', (req, res) => {
   })
 })
 
-// Handle in-valid route path
+// Handle in-valid route
 app.all('*', function(req, res) {
   const response = { data: null, message: 'Route not found!!' }
   res.status(400).send(response)
