@@ -3,16 +3,29 @@ service: pokemon-service
 provider:
   name: aws
   runtime: nodejs8.10
-  stage: 'dev'
-  region: 'us-east-1'
+  stage: dev
+  region: us-east-1
   memorySize: 512
 
 functions:
   pokemonFunc:
     handler: index.handler
     events:
-      - http: ANY /
-      - http: 'ANY {proxy+}'
+      - http:
+          path: pokemon
+          method: get
+      - http:
+          path: pokemon/{id}
+          method: get
+      - http:
+          path: pokemon
+          method: post
+      - http:
+          path: pokemon
+          method: put
+      - http:
+          path: pokemon/{id}
+          method: delete
 
 plugins:
   - serverless-offline
