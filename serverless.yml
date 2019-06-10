@@ -1,4 +1,4 @@
-service: pokemon-service
+service: fashion-service
 
 provider:
   name: aws
@@ -8,23 +8,23 @@ provider:
   memorySize: 512
 
 functions:
-  pokemonFunc:
+  fashionFunc:
     handler: index.handler
     events:
       - http:
-          path: pokemon
+          path: fashion
           method: get
       - http:
-          path: pokemon/{id}
+          path: fashion/{id}
           method: get
       - http:
-          path: pokemon
+          path: fashion
           method: post
       - http:
-          path: pokemon/{id}
+          path: fashion/{id}
           method: put
       - http:
-          path: pokemon/{id}
+          path: fashion/{id}
           method: delete
 
 plugins:

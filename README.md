@@ -16,30 +16,30 @@ There are lots of significant advantages of using a serverless framework instead
 
 In this article, we're going to build a serverless Pokemon RESTful API services with a "Serverless Framework". Checkout below table for reference.
 
-The code for this article can be found here: https://github.com/sagar-gavhane/pokemon-app
+The code for this article can be found here: https://github.com/sagar-gavhane/fashion-app
 
-| #   | ENDPOINT     | METHOD | DESCRIPTION                                 |
-| --- | ------------ | ------ | ------------------------------------------- |
-| 1   | pokemon/     | GET    | Get a list of all pokemon from the database |
-| 2   | pokemon/{id} | GET    | Get a specific pokemon.                     |
-| 3   | pokemon/     | POST   | Add new pokemon to the database.            |
-| 4   | pokemon/{id} | PUT    | Update existing pokemon.                    |
-| 5   | pokemon/{id} | DELETE | Delete existing pokemon.                    |
+| #   | ENDPOINT     | METHOD | DESCRIPTION                          |
+| --- | ------------ | ------ | ------------------------------------ |
+| 1   | fashion/     | GET    | Get a all fashions from the database |
+| 2   | fashion/{id} | GET    | Get a specific fashionpo             |
+| 3   | fasbion/     | POST   | Add new fashion to the database.     |
+| 4   | fashion/{id} | PUT    | Update existing fashion.             |
+| 5   | fashion/{id} | DELETE | Delete existing fashion.             |
 
 ### Prerequisites
 
 Install the following tools and frameworks:
 
-1. Node.js 8.10 or above
-2. MySQL
-3. Visual Studio Code (preffered) or any code editor
-4. Postman
+1.  Node.js 8.10 or above
+2.  MySQL
+3.  Visual Studio Code (preffered) or any code editor
+4.  Postman
 
 Next, create the project folder and initialize it using npm.
 
 ```bash
-mkdir pokemon-app
-cd pokemon-app
+mkdir fashion-app
+cd fashion-app
 npm init -f
 ```
 
@@ -47,12 +47,12 @@ npm init -f
 
 Install the following packages to work with "Serverless Framework"
 
-- [express](https://expressjs.com/) - Fast, unopinionated, minimalist web framework for Node.js.
-- [body-parser](https://www.npmjs.com/package/body-parser) - Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
-- [mysql](https://github.com/mysqljs/mysql#getting-the-id-of-an-inserted-row) - A pure node.js JavaScript Client implementing the MySql protocol.
-- [serverless](https://serverless.com/) - Framework for operationalize serverless development.
-- [serverless-http](https://github.com/dougmoscrop/serverless-http) - Plugin allows you to wrap express API for serverless use.
-- [serverless-offline](https://www.npmjs.com/package/serverless-offline) - Plugin to emulate AWS Lambda and API Gateway for speed up local development.
+* [express](https://expressjs.com/) - Fast, unopinionated, minimalist web framework for Node.js.
+* [body-parser](https://www.npmjs.com/package/body-parser) - Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
+* [mysql](https://github.com/mysqljs/mysql#getting-the-id-of-an-inserted-row) - A pure node.js JavaScript Client implementing the MySql protocol.
+* [serverless](https://serverless.com/) - Framework for operationalize serverless development.
+* [serverless-http](https://github.com/dougmoscrop/serverless-http) - Plugin allows you to wrap express API for serverless use.
+* [serverless-offline](https://www.npmjs.com/package/serverless-offline) - Plugin to emulate AWS Lambda and API Gateway for speed up local development.
 
 First up, we’ll install the serverless CLI:
 
@@ -74,7 +74,7 @@ Before we start writing the handler code, we’re going to structure the project
 Create the following structure at the root level:
 
 ```
-/pokemon-app/
+/fashion-app/
 |--/configs
 |----/dbConfig.js
 |--/node_modules
@@ -90,7 +90,7 @@ Make sure to list private files into `.gitignore` file so that we don’t accide
 
 ```yaml
 # serverless.yml
-service: pokemon-service
+service: fashion-service
 
 provider:
   name: aws
@@ -100,23 +100,23 @@ provider:
   memorySize: 512
 
 functions:
-  pokemonFunc:
+  fashionFunc:
     handler: index.handler
     events:
       - http:
-          path: pokemon
+          path: fashion
           method: get
       - http:
-          path: pokemon/{id}
+          path: fashion/{id}
           method: get
       - http:
-          path: pokemon
+          path: fashion
           method: post
       - http:
-          path: pokemon/{id}
+          path: fashion/{id}
           method: put
       - http:
-          path: pokemon/{id}
+          path: fashion/{id}
           method: delete
 
 plugins:
@@ -125,25 +125,26 @@ plugins:
 
 We are doing a few things here:
 
-1. **service**: `pokemon-service` is a name of the service. You can give any type name for your service.
-2. **provider**: This is where we specify the name of the `provider` we’re using (AWS as cloud service provider) and configurations specific to it. In our case, we’ve configured the runtime (Node.js) with 8.10 version and region to `us-east-1`.
-3. **functions**: We specify the functions provided by our service, Here I'm specifying `pokemonFunc` as function name with `http` events. We can also say that this is our AWS Lambda function.
+1.  **service**: `fashio-service` is a name of the service. You can give any type name for your service.
+2.  **provider**: This is where we specify the name of the `provider` we’re using (AWS as cloud service provider) and configurations specific to it. In our case, we’ve configured the runtime (Node.js) with 8.10 version and region to `us-east-1`.
+3.  **functions**: We specify the functions provided by our service, Here I'm specifying `fashionFunc` as function name with `http` events. We can also say that this is our AWS Lambda function.
 
-We have to store our pokemon somewhere, for sake of simplicity I'm chosen MySQL but you can also use another type database. I have already created a database with name pokemon_db and inside a database created table pokemon_tb with id, name, height, weight, avatar, and createAt columns.
+We have to store our fashion somewhere, for sake of simplicity I'm chosen MySQL but you can also use another type database. I have already created a database with name fashion_db and inside a database created table fashion_tb with id, name, height, weight, avatar, and createAt columns.
 
 ```sql
-CREATE TABLE `pokemon_tb` (
+CREATE TABLE `fashion_tb` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `height` float NOT NULL,
   `weight` float NOT NULL,
   `avatar` varchar(255) NOT NULL,
+  `color`  varchar(255) NOT NULL,
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-ALTER TABLE `pokemon_tb` ADD PRIMARY KEY (`id`);
+ALTER TABLE `fashion_tb` ADD PRIMARY KEY (`id`);
 
-ALTER TABLE `pokemon_tb` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+ALTER TABLE `fashion_tb` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 ```
 
 Rather than creating and managing connections every time, we configure pool connections once inside `dbConfig.js` file and reused it multiple times.
@@ -155,7 +156,7 @@ const pool = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "12345",
-  database: "pokemon_app_db"
+  database: "fashion_app_db"
 });
 
 module.exports = pool;
@@ -165,7 +166,7 @@ module.exports = pool;
 
 Let's focus on handling RESTful api route inside the index.js file with express. First, we imported the `serverless-http` package at the top. Second, we exported a handler function which is our application wrapped in the serverless package.
 
-Here, we're implementing basic five routes for handling `crud` operation with pokemon (without any validation).
+Here, we're implementing basic five routes for handling `crud` operation with fashion (without any validation).
 
 ```javascript
 const express = require("express");
@@ -178,48 +179,48 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Handle pokemon GET route for all pokemon
-app.get("/pokemon/", (req, res) => {
-  const query = "SELECT * FROM pokemon_tb";
+// Handle fashion GET route for all fashion
+app.get("/fashion/", (req, res) => {
+  const query = "SELECT * FROM fashion_tb";
   pool.query(query, (err, results, fields) => {
     if (err) {
       const response = { data: null, message: err.message };
       res.send(response);
     }
 
-    const pokemons = [...results];
+    const fashioons = [...results];
     const response = {
-      data: pokemons,
-      message: "All pokemons successfully retrieved."
+      data: fashions,
+      message: "All fashions successfully retrieved."
     };
     res.send(response);
   });
 });
 
-// Handle pokemon GET route for specific pokemon
-app.get("/pokemon/:id", (req, res) => {
+// Handle fashion GET route for specific fashion
+app.get("/fashion/:id", (req, res) => {
   const id = req.params.id;
-  const query = `SELECT * FROM pokemon_tb WHERE id=${id}`;
+  const query = `SELECT * FROM fashion_tb WHERE id=${id}`;
   pool.query(query, (err, results, fields) => {
     if (err) {
       const response = { data: null, message: err.message };
       res.send(response);
     }
 
-    const pokemon = results[0];
+    const fashion = results[0];
     const response = {
-      data: pokemon,
-      message: `Pokemon ${pokemon.name} successfully retrieved.`
+      data: fashion,
+      message: `Fashion ${fashion.name} successfully retrieved.`
     };
     res.status(200).send(response);
   });
 });
 
-// Handle pokemon POST route
-app.post("/pokemon/", (req, res) => {
-  const { name, height, weight, avatar } = req.body;
+// Handle fashion POST route
+app.post("/fashion/", (req, res) => {
+  const { name, height, weight, avatar, color } = req.body;
 
-  const query = `INSERT INTO pokemon_tb (name, height, weight, avatar) VALUES ('${name}', '${height}', '${weight}', '${avatar}')`;
+  const query = `INSERT INTO fashion_tb (name, height, weight, avatar, color) VALUES ('${name}', '${height}', '${weight}', '${avatar}', '$(color)')`;
   pool.query(query, (err, results, fields) => {
     if (err) {
       const response = { data: null, message: err.message };
@@ -227,53 +228,57 @@ app.post("/pokemon/", (req, res) => {
     }
 
     const { insertId } = results;
-    const pokemon = { id: insertId, name, height, weight, avatar };
+    const fashion = { id: insertId, name, height, weight, avatar, color };
     const response = {
-      data: pokemon,
-      message: `Pokemon ${name} successfully added.`
+      data: fashion,
+      message: `Fashion ${name} successfully added.`
     };
     res.status(201).send(response);
   });
 });
 
-// Handle pokemon PUT route
-app.put("/pokemon/:id", (req, res) => {
+// Handle fashion PUT route
+app.put("/fashion/:id", (req, res) => {
   const { id } = req.params;
-  const query = `SELECT * FROM pokemon_tb WHERE id=${id} LIMIT 1`;
+  const query = `SELECT * FROM fashion_tb WHERE id=${id} LIMIT 1`;
   pool.query(query, (err, results, fields) => {
     if (err) {
       const response = { data: null, message: err.message };
       res.send(response);
     }
 
-    const { id, name, height, weight, avatar } = { ...results[0], ...req.body };
-    const query = `UPDATE pokemon_tb SET name='${name}', height='${height}', weight='${weight}', avatar='${avatar}' WHERE id='${id}'`;
+    const { id, name, height, weight, avatar, color } = {
+      ...results[0],
+      ...req.body
+    };
+    const query = `UPDATE fashion_tb SET name='${name}', height='${height}', weight='${weight}', avatar='${avatar}', color='${color}' WHERE id='${id}'`;
     pool.query(query, (err, results, fields) => {
       if (err) {
         const response = { data: null, message: err.message };
         res.send(response);
       }
 
-      const pokemon = {
+      const fashion = {
         id,
         name,
         height,
         weight,
-        avatar
+        avatar,
+        color
       };
       const response = {
-        data: pokemon,
-        message: `Pokemon ${name} is successfully updated.`
+        data: fashion,
+        message: `Fashion ${name} has been successfully updated.`
       };
       res.send(response);
     });
   });
 });
 
-// Handler pokemon DELETE route
-app.delete("/pokemon/:id", (req, res) => {
+// Handler fashion DELETE route
+app.delete("/fashion/:id", (req, res) => {
   const { id } = req.params;
-  const query = `DELETE FROM pokemon_tb WHERE id=${id}`;
+  const query = `DELETE FROM fashion_tb WHERE id=${id}`;
   pool.query(query, (err, results, fields) => {
     if (err) {
       const response = { data: null, message: err.message };
@@ -282,7 +287,7 @@ app.delete("/pokemon/:id", (req, res) => {
 
     const response = {
       data: null,
-      message: `Pokemon with id: ${id} successfully deleted.`
+      message: `Fashion with id: ${id} successfully deleted.`
     };
     res.send(response);
   });
@@ -302,25 +307,25 @@ module.exports.handler = serverless(app);
 
 ![Terminal snapshot](https://thepracticaldev.s3.amazonaws.com/i/aq687tnep6b1r4foe0ok.png)
 
-**Get all pokemon:**
+**Get all fashions:**
 
-![GET all pokemon](https://thepracticaldev.s3.amazonaws.com/i/rm9p406vuzo4owbd8rdm.png)
+![GET all fashion](https://thepracticaldev.s3.amazonaws.com/i/rm9p406vuzo4owbd8rdm.png)
 
-**Get pokemon by id:**
+**Get fashion by id:**
 
-![GET pokemon](https://thepracticaldev.s3.amazonaws.com/i/qvri39i4itioieox3fjw.png)
+![GET fashion](https://thepracticaldev.s3.amazonaws.com/i/qvri39i4itioieox3fjw.png)
 
-**Add new pokemon:**
+**Add new fashion:**
 
-![Add new pokemon](https://thepracticaldev.s3.amazonaws.com/i/6sthaflagvclef6f2hol.png)
+![Add new fashion](https://thepracticaldev.s3.amazonaws.com/i/6sthaflagvclef6f2hol.png)
 
-**Update existing pokemon:**
+**Update existing fashion:**
 
-![Update existing pokemon](https://thepracticaldev.s3.amazonaws.com/i/ogopnd776x0wx0b63679.png)
+![Update existing fashion](https://thepracticaldev.s3.amazonaws.com/i/ogopnd776x0wx0b63679.png)
 
-**Delete existing pokemon:**
+**Delete existing fashion:**
 
-![Delete existing pokemon](https://thepracticaldev.s3.amazonaws.com/i/ktbormln4t88bahr7b2s.png)
+![Delete existing fashion](https://thepracticaldev.s3.amazonaws.com/i/ktbormln4t88bahr7b2s.png)
 
 ### Deployment
 

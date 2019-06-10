@@ -6,121 +6,174 @@ const pool = require('./configs/dbConfig')
 const app = express()
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({
+  extended: true
+}))
 
-// Handle pokemon GET route for all pokemon
-app.get('/pokemon/', (req, res) => {
-  const query = 'SELECT * FROM pokemon_tb'
+// Handle fashion GET route for all fashion
+app.get('/fashion/', (req, res) => {
+  const query = 'SELECT * FROM fashion_tb'
   pool.query(query, (err, results, fields) => {
     if (err) {
-      const response = { data: null, message: err.message, }
+      const response = {
+        data: null,
+        message: err.message,
+      }
       res.send(response)
     }
 
-    const pokemons = [...results]
+    const fashions = [...results]
     const response = {
-      data: pokemons,
-      message: 'All pokemons successfully retrieved.',
+      data: fashions,
+      message: 'All fashions successfully retrieved.',
     }
     res.send(response)
   })
 })
 
-// Handle pokemon GET route for specific pokemon
-app.get('/pokemon/:id', (req, res) => {
+// Handle fasshion GET route for specific fashion
+app.get('/fashion/:id', (req, res) => {
   const id = req.params.id
-  const query = `SELECT * FROM pokemon_tb WHERE id=${id}`
+  const query = `SELECT * FROM fashion_tb WHERE id=${id}`
   pool.query(query, (err, results, fields) => {
     if (err) {
-      const response = { data: null, message: err.message, }
+      const response = {
+        data: null,
+        message: err.message,
+      }
       res.send(response)
     }
 
-    const pokemon = results[0]
+    const fashion = results[0]
     const response = {
-      data: pokemon,
-      message: `Pokemon ${pokemon.name} successfully retrieved.`,
+      data: fashion,
+      message: `Fashion ${fashion.name} successfully retrieved.`,
     }
     res.status(200).send(response)
   })
 })
 
-// Handle pokemon POST route
-app.post('/pokemon/', (req, res) => {
-  const { name, height, weight, avatar } = req.body
+// Handle fashion POST route
+app.post('/fashion/', (req, res) => {
+  const {
+    name,
+    height,
+    weight,
+    avatar,
+    color
+  } = req.body
 
-  const query = `INSERT INTO pokemon_tb (name, height, weight, avatar) VALUES ('${name}', '${height}', '${weight}', '${avatar}')`
+  const query = `INSERT INTO fashion_tb (name, height, weight, avatar, color) VALUES ('${name}', '${height}', '${weight}', '${avatar}', '$(color)')`
   pool.query(query, (err, results, fields) => {
     if (err) {
-      const response = { data: null, message: err.message, }
+      const response = {
+        data: null,
+        message: err.message,
+      }
       res.send(response)
     }
 
-    const { insertId } = results
-    const pokemon = { id: insertId, name, height, weight, avatar }
+    const {
+      insertId
+    } = results
+    const fashion = {
+      id: insertId,
+      name,
+      height,
+      weight,
+      avatar,
+      color
+    }
     const response = {
-      data: pokemon,
-      message: `Pokemon ${name} successfully added.`,
+      data: fashion,
+      message: `Fashion ${name} successfully added.`,
     }
     res.status(201).send(response)
   })
 })
 
-// Handle pokemon PUT route
-app.put('/pokemon/:id', (req, res) => {
-  const { id } = req.params
-  const query = `SELECT * FROM pokemon_tb WHERE id=${id} LIMIT 1`
+// Handle fashion PUT route
+app.put('/fashion/:id', (req, res) => {
+  const {
+    id
+  } = req.params
+  const query = `SELECT * FROM fashion_tb WHERE id=${id} LIMIT 1`
   pool.query(query, (err, results, fields) => {
     if (err) {
-      const response = { data: null, message: err.message, }
+      const response = {
+        data: null,
+        message: err.message,
+      }
       res.send(response)
     }
 
-    const { id, name, height, weight, avatar } = { ...results[0], ...req.body }
-    const query = `UPDATE pokemon_tb SET name='${name}', height='${height}', weight='${weight}', avatar='${avatar}' WHERE id='${id}'`
+    const {
+      id,
+      name,
+      height,
+      weight,
+      avatar,
+      color
+    } = {
+      ...results[0],
+      ...req.body
+    }
+    const query = `UPDATE fashioon_tb SET name='${name}', height='${height}', weight='${weight}', avatar='${avatar}', color='${color}' WHERE id='${id}'`
     pool.query(query, (err, results, fields) => {
       if (err) {
-        const response = { data: null, message: err.message, }
+        const response = {
+          data: null,
+          message: err.message,
+        }
         res.send(response)
       }
 
-      const pokemon = {
+      const fashion = {
         id,
         name,
         height,
         weight,
         avatar,
+        color
       }
       const response = {
-        data: pokemon,
-        message: `Pokemon ${name} is successfully updated.`,
+        data: fashion,
+        message: `Fashion ${name} has been successfully updated.`,
       }
       res.send(response)
     })
   })
 })
 
-// Handler pokemon DELETE route
-app.delete('/pokemon/:id', (req, res) => {
-  const { id } = req.params
-  const query = `DELETE FROM pokemon_tb WHERE id=${id}`
+// Handler fashion DELETE route
+app.delete('/fashion/:id', (req, res) => {
+  const {
+    id
+  } = req.params
+  const query = `DELETE FROM fashion_tb WHERE id=${id}`
   pool.query(query, (err, results, fields) => {
     if (err) {
-      const response = { data: null, message: err.message }
+      const response = {
+        data: null,
+        message: err.message
+      }
       res.send(response)
     }
 
     const response = {
       data: null,
-      message: `Pokemon with id: ${id} successfully deleted.`,
+      message: `Fashion with id: ${id} successfully deleted.`,
     }
     res.send(response)
   })
 })
 
 // Handle in-valid route
-app.all('*', function(req, res) {
-  const response = { data: null, message: 'Route not found!!' }
+app.all('*', function (req, res) {
+  const response = {
+    data: null,
+    message: 'Route not found!!'
+  }
   res.status(400).send(response)
 })
 
